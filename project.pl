@@ -14,12 +14,18 @@ preposition_phrase --> preposition, noun_phrase(object, Singularity).
 
 adjective_phrase(VowelOrConsonant, Used) --> [].
 adjective_phrase(VowelOrConsonant, Used) --> 
-    [Adjective], 
     { 
-        adjective((Adjective, VowelOrConsonant)), 
-        \+ member(Adjective, Used) 
+        % Finds all adj that match the adjective(Adj, VowelOrConsonant) then bind to Adjectives
+        findall(Adj, adjective((Adj, VowelOrConsonant)), Adjectives),
+        % Remove the used adjective from Adjectives
+        subtract(Adjectives, Used, Remaining),
+        % Generate permutations of the reamining adjs
+        permutation(Remaining, Permuted),
+        member(Adjective, Permuted)
     },
+    [Adjective], 
     adjective_phrase(VowelOrConsonant, [Adjective | Used]).
+% VERY INEFFICIENT BUT WORKS
 
 % ------------------- Lexicon ------------------------
 
@@ -34,9 +40,13 @@ determiner(consonant, singular) --> [a].
 pronoun(subject, singular) --> [he].
 pronoun(subject, singular) --> [she].
 pronoun(subject, plural) --> [they].
+pronoun(subject, plural) --> [i].
 pronoun(object, singular) --> [him].
 pronoun(object, singular) --> [her].
 pronoun(object, plural) --> [them].
+% Didn't explicitly realize this, but You can be object and subject, and it takes on the plural form of a verb
+pronoun(object, plural) --> [you].
+pronoun(subject, plural) --> [you].
 
 % Nouns
 noun(consonant, singular) --> [man].
@@ -51,6 +61,7 @@ adjective((happy, consonant)).
 % Verbs
 verb(plural) --> [ride].
 verb(singular) --> [rides].
+% verb(singular) --> [rode].
 
 % Prepositions
 preposition --> [in].
