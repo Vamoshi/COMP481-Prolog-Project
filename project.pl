@@ -87,7 +87,7 @@ pronoun(object) --> [them].
 
 % Nouns
 noun --> [man].
-noun --> [elephant].
+noun --> [airplane].
 
 % Verbs
 verb --> [eats].
