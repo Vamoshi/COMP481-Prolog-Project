@@ -1,59 +1,18 @@
-% You are only required to create Prolog rules for the following grammar rules.
-% • Simple Sentences
-% • Noun Phrases
-% • Verb Phrases
-% • Prepositional Phrases
-% • Adjective Phrases
-% • Determiners
-% • Verbs
-% • Adjectives
-% • Nouns
-% • Pronouns
-
-% Sentence = Noun Phrase + Verb Phrase
-% Sentence = Noun Phrase + Verb Phrase + Preposition Phrase
-
-% Noun Phrase = Determiner + Noun
-%             = Pronoun
-%             = Determiner + Adjective Phrase + Noun
-
-% Verb Phrase = Verb + Noun Phrase
-%             = Verb
-%             = Verb + Prepositional Phrase
-
-% Prepositional Phrase = Preposition + Noun Phrase
-
-% Adjective Phrase = Adjective
-%                  = Adjective + Adjective + ... + Adjective
-
 % ------------------- RULES ------------------------
 
-% Sentence = Noun Phrase + Verb Phrase
-% Sentence = Noun Phrase + Verb Phrase + Preposition Phrase
 sentence --> noun_phrase(subject), verb_phrase.
 sentence --> noun_phrase(subject), verb_phrase, preposition_phrase.
 
-% Noun Phrase = Determiner + Noun
-%             = Pronoun
-%             = Determiner + Adjective Phrase + Noun
-noun_phrase(_) --> determiner, noun.
-% noun_phrase(_) --> determiner, adjective_phrase, noun.
-noun_phrase(_) --> determiner, adjective_phrase([]), noun.
+noun_phrase(_) --> determiner(V), adjective_phrase([]), noun(V).
 noun_phrase(subject) --> pronoun(subject).
 noun_phrase(subject) --> pronoun(object).
 
-% Verb Phrase = Verb + Noun Phrase
-%             = Verb
-%             = Verb + Prepositional Phrase
 verb_phrase --> verb.
 verb_phrase --> verb, noun_phrase(object).
 verb_phrase --> verb, preposition_phrase.
 
-% Prepositional Phrase = Preposition + Noun Phrase
 preposition_phrase --> preposition, noun_phrase(object).
 
-% Adjective Phrase = Adjective
-%                  = Adjective1 + Adjective2 + ... + AdjectiveN (Unique values)
 adjective_phrase(_) --> [].
 adjective_phrase(Used) -->
     % Bind current adjective to A
@@ -71,11 +30,20 @@ adjective_phrase(Used) -->
 % ------------------- Lexicon ------------------------
 
 % Determiners
-determiner --> [the].
-determiner --> [a].
-determiner --> [an].
-determiner --> [this].
-determiner --> [these].
+% determiner(_) --> [the].
+% determiner(_) --> [this].
+% determiner(_) --> [these].
+
+determiner(consonant) --> [a].
+determiner(vowel) --> [an].
+
+% Nouns
+noun(consonant) --> [man].
+noun(vowel) --> [elephant].
+
+% Adjectives
+adjective(big).
+adjective(ugly).
 
 % Pronouns
 pronoun(subject) --> [he].
@@ -85,10 +53,6 @@ pronoun(object) --> [him].
 pronoun(object) --> [her].
 pronoun(object) --> [them].
 
-% Nouns
-noun --> [man].
-noun --> [elephant].
-
 % Verbs
 verb --> [eats].
 verb --> [ate].
@@ -96,10 +60,6 @@ verb --> [thinks].
 verb --> [thought].
 verb --> [rides].
 verb --> [rode].
-
-% Adjectives
-adjective(big).
-adjective(happy).
 
 % Prepositions
 preposition --> [to].
