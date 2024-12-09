@@ -86,11 +86,8 @@ pronoun(object) --> [her].
 pronoun(object) --> [them].
 
 % Nouns
-noun --> [dog].
-noun --> [cat].
 noun --> [man].
-noun --> [woman].
-noun --> [car].
+noun --> [elephant].
 
 % Verbs
 verb --> [eats].
