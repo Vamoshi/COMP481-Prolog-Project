@@ -37,7 +37,8 @@ sentence --> noun_phrase(subject), verb_phrase, preposition_phrase.
 %             = Pronoun
 %             = Determiner + Adjective Phrase + Noun
 noun_phrase(_) --> determiner, noun.
-noun_phrase(_) --> determiner, adjective_phrase, noun.
+% noun_phrase(_) --> determiner, adjective_phrase, noun.
+noun_phrase(_) --> determiner, adjective_phrase([]), noun.
 noun_phrase(subject) --> pronoun(subject).
 noun_phrase(subject) --> pronoun(object).
 
@@ -52,9 +53,20 @@ verb_phrase --> verb, preposition_phrase.
 preposition_phrase --> preposition, noun_phrase(object).
 
 % Adjective Phrase = Adjective
-%                  = Adjective + Adjective + ... + Adjective
-adjective_phrase --> adjective.
-adjective_phrase --> adjective, adjective_phrase.
+%                  = Adjective1 + Adjective2 + ... + AdjectiveN (Unique values)
+adjective_phrase(_) --> [].
+adjective_phrase(Used) -->
+    % Bind current adjective to A
+    [A], 
+    { 
+        % For adjective A, 
+        % make sure it's a defined adjective
+        adjective(A), 
+        % make sure it's not a member of used adjectives
+        \+ member(A, Used) 
+    },
+    % add A to list of Used adjectives
+    adjective_phrase([ A | Used ]).
 
 % ------------------- Lexicon ------------------------
 
@@ -89,12 +101,8 @@ verb --> [rides].
 verb --> [rode].
 
 % Adjectives
-adjective --> [happy].
-adjective --> [sad].
-adjective --> [big].
-adjective --> [small].
-adjective --> [pretty].
-adjective --> [ugly].
+adjective(big).
+adjective(happy).
 
 % Prepositions
 preposition --> [to].
@@ -103,3 +111,14 @@ preposition --> [with].
 preposition --> [on].
 preposition --> [in].
 preposition --> [at].
+
+output_to_file :-
+    open('output.txt', write, Stream),
+    set_output(Stream),
+    (
+        phrase(sentence, Sentence),
+        write(Sentence), nl, fail
+        ; true
+    ),
+    set_output(user),
+    close(Stream).
